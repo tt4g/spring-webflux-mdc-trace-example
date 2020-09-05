@@ -1,0 +1,24 @@
+logging.register-shutdown-hook: true
+logging.file.clean-history-on-start: true
+logging.file.name: log/spring-webflux-mdc-trace-example.log
+### Don't define `logging.file.path` if `logging.file.name` is defined.
+# logging.file.path
+logging.pattern.console: "${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"
+logging.pattern.file: "${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"
+logging.file.max-history: 7
+logging.level.root: DEBUG
+
+# For more details Request logging.
+spring.mvc.log-request-details: true
+spring.codec.log-request-details: true
+
+# Enable reactive WEB application (WebFlux).
+# https://github.com/spring-projects/spring-boot/issues/22162
+spring.main.web-application-type: REACTIVE
+server.port: 8080
+spring.mvc.servlet.path: /
+server.servlet.context-path: /mdc-trace-example
+spring.webflux.base-path: /mdc-trace-example
+
+server.shutdown: graceful
+spring.lifecycle.timeout-per-shutdown-phase: 30s
