@@ -31,6 +31,7 @@ dependencies {
     implementation(group: "org.springframework.boot", name: "spring-boot-starter")
     implementation(group: "org.springframework.boot", name: "spring-boot-starter-logging")
     implementation(group: "org.springframework.boot", name: "spring-boot-starter-webflux")
+    implementation(group: "org.springframework.session", name: "spring-session-core")
 
     testImplementation(group: "org.springframework.boot", name: "spring-boot-starter-test")
 }
