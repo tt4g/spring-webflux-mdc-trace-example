@@ -24,6 +24,8 @@ public class TraceIdWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return this.loadTraceId(exchange)
+            // Call WebFilterChain#filter(ServerWebExchange if unable to get TraceId.
+            .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)).then(Mono.empty()))
             .flatMap(traceId -> {
                 // Set X-Trace-Id: <trace-id> to response header.
                 exchange.getResponse().getHeaders().add(TRACE_ID_HEADER_NAME, traceId.render());
