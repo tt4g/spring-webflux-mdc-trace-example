@@ -19,21 +19,25 @@
 package com.github.tt4g.spring.webflux.mdc.trace.example.trace;
 
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 public class WebSessionServerTraceIdRepository implements TraceIdRepository {
 
     private static final String SESSION_ATTRIBUTE_NAME =
         WebSessionServerTraceIdRepository.class.getName().concat(".TRACE_ID");
 
+    private TraceIdGenerator traceIdGenerator;
+
+    public WebSessionServerTraceIdRepository(TraceIdGenerator traceIdGenerator) {
+        this.traceIdGenerator = Objects.requireNonNull(traceIdGenerator);
+    }
+
     @Override
     public Mono<TraceId> generateTraceId(ServerWebExchange exchange) {
-        return Mono.fromCallable(this::generateTraceId)
-            .subscribeOn(Schedulers.boundedElastic());
+        return this.traceIdGenerator.generate(exchange);
     }
 
     @Override
@@ -55,13 +59,6 @@ public class WebSessionServerTraceIdRepository implements TraceIdRepository {
                 }
             })
             .then();
-    }
-
-    private TraceId generateTraceId() {
-        // NOTE: UUID.randomUUID() is blocking operation!
-        String uuid = UUID.randomUUID().toString();
-
-        return new TraceId(uuid);
     }
 
 }

@@ -5,6 +5,7 @@ import javax.annotation.PreDestroy;
 
 import com.github.tt4g.spring.webflux.mdc.trace.example.mdc.ReactorMDCTracer;
 import com.github.tt4g.spring.webflux.mdc.trace.example.trace.TraceIdWebFilter;
+import com.github.tt4g.spring.webflux.mdc.trace.example.trace.UUIDTraceIdGenerator;
 import com.github.tt4g.spring.webflux.mdc.trace.example.trace.WebSessionServerTraceIdRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +25,9 @@ public class TraceConfig {
 
     @Bean
     public TraceIdWebFilter traceIdWebFilter() {
+        UUIDTraceIdGenerator uuidTraceIdGenerator = new UUIDTraceIdGenerator();
         WebSessionServerTraceIdRepository webSessionServerTraceIdRepository =
-            new WebSessionServerTraceIdRepository();
+            new WebSessionServerTraceIdRepository(uuidTraceIdGenerator);
 
         return new TraceIdWebFilter(webSessionServerTraceIdRepository);
     }
