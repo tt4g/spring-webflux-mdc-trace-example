@@ -5,10 +5,10 @@ import reactor.core.publisher.Mono;
 
 public interface TraceIdRepository {
 
-    Mono<TraceId> generateTraceId(ServerWebExchange exchange);
+    Mono<TraceId> generate(ServerWebExchange exchange);
 
-    Mono<TraceId> loadTraceId(ServerWebExchange exchange);
+    Mono<TraceId> load(ServerWebExchange exchange);
 
-    Mono<Void> saveTraceId(ServerWebExchange exchange, TraceId traceId);
+    Mono<Void> save(ServerWebExchange exchange, TraceId traceId);
 
 }

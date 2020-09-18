@@ -36,19 +36,19 @@ public class WebSessionServerTraceIdRepository implements TraceIdRepository {
     }
 
     @Override
-    public Mono<TraceId> generateTraceId(ServerWebExchange exchange) {
+    public Mono<TraceId> generate(ServerWebExchange exchange) {
         return this.traceIdGenerator.generate(exchange);
     }
 
     @Override
-    public Mono<TraceId> loadTraceId(ServerWebExchange exchange) {
+    public Mono<TraceId> load(ServerWebExchange exchange) {
         return exchange.getSession()
             .filter(webSession -> webSession.getAttributes().containsKey(SESSION_ATTRIBUTE_NAME))
             .map(webSession -> webSession.getAttribute(SESSION_ATTRIBUTE_NAME));
     }
 
     @Override
-    public Mono<Void> saveTraceId(ServerWebExchange exchange, TraceId traceId) {
+    public Mono<Void> save(ServerWebExchange exchange, TraceId traceId) {
         return exchange.getSession()
             .doOnNext(webSession -> {
                 Map<String, Object> attributes = webSession.getAttributes();

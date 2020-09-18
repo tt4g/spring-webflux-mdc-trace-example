@@ -45,7 +45,7 @@ public class TraceIdWebFilter implements WebFilter {
         return parseHeader(exchange)
             .orElseGet(() ->
                 // If X-Trace-Id header is not specified, load TraceId.
-                this.traceIdRepository.loadTraceId(exchange)
+                this.traceIdRepository.load(exchange)
                     // If cannot load TraceId, generate new TraceId.
                     .switchIfEmpty(Mono.defer(() -> this.generateTraceId(exchange))));
     }
@@ -62,15 +62,15 @@ public class TraceIdWebFilter implements WebFilter {
                 Mono.just(new TraceId(nonEmptyTraceId))
                     // Save TraceId from X-Trace-Id header.
                     .flatMap(traceId ->
-                        this.traceIdRepository.saveTraceId(exchange, traceId)
+                        this.traceIdRepository.save(exchange, traceId)
                             .thenReturn(traceId)));
     }
 
     private Mono<TraceId> generateTraceId(ServerWebExchange exchange) {
-        return this.traceIdRepository.generateTraceId(exchange)
+        return this.traceIdRepository.generate(exchange)
             // Save generated TraceId.
             .flatMap(traceId ->
-                this.traceIdRepository.saveTraceId(exchange, traceId)
+                this.traceIdRepository.save(exchange, traceId)
                     .thenReturn(traceId));
     }
 

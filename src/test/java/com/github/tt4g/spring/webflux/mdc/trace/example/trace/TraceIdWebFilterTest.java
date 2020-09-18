@@ -25,8 +25,8 @@ class TraceIdWebFilterTest {
         @Mock WebFilterChain webFilterChain) {
 
         mockFilter(webFilterChain);
-        mockLoadTraceId(this.traceIdRepository);
-        mockGenerateTraceId(this.traceIdRepository);
+        mockLoad(this.traceIdRepository);
+        mockGenerate(this.traceIdRepository);
 
         MockServerWebExchange mockServerWebExchange =
             MockServerWebExchange.from(MockServerHttpRequest.get("/"));
@@ -37,11 +37,11 @@ class TraceIdWebFilterTest {
         Mockito.verify(webFilterChain, Mockito.times(1))
             .filter(Mockito.eq(mockServerWebExchange));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .loadTraceId(Mockito.any(ServerWebExchange.class));
+            .load(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .generateTraceId(Mockito.any(ServerWebExchange.class));
+            .generate(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.never())
-            .saveTraceId(
+            .save(
                 Mockito.any(ServerWebExchange.class),
                 Mockito.any(TraceId.class));
     }
@@ -51,7 +51,7 @@ class TraceIdWebFilterTest {
         @Mock WebFilterChain webFilterChain) {
 
         mockFilter(webFilterChain);
-        mockSaveTraceId(this.traceIdRepository);
+        mockSave(this.traceIdRepository);
 
         MockServerWebExchange mockServerWebExchange =
             MockServerWebExchange.from(MockServerHttpRequest.get("/").header("X-Trace-Id", "foo"));
@@ -62,11 +62,11 @@ class TraceIdWebFilterTest {
         Mockito.verify(webFilterChain, Mockito.times(1))
             .filter(Mockito.eq(mockServerWebExchange));
         Mockito.verify(this.traceIdRepository, Mockito.never())
-            .loadTraceId(Mockito.any(ServerWebExchange.class));
+            .load(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.never())
-            .generateTraceId(Mockito.any(ServerWebExchange.class));
+            .generate(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .saveTraceId(
+            .save(
                 Mockito.any(ServerWebExchange.class),
                 Mockito.any(TraceId.class));
     }
@@ -77,9 +77,9 @@ class TraceIdWebFilterTest {
         @Mock TraceId traceId) {
 
         mockFilter(webFilterChain);
-        mockLoadTraceId(this.traceIdRepository);
-        mockGenerateTraceId(this.traceIdRepository, traceId);
-        mockSaveTraceId(this.traceIdRepository);
+        mockLoad(this.traceIdRepository);
+        mockGenerate(this.traceIdRepository, traceId);
+        mockSave(this.traceIdRepository);
 
         MockServerWebExchange mockServerWebExchange =
             MockServerWebExchange.from(MockServerHttpRequest.get("/").header("X-Trace-Id", ""));
@@ -90,11 +90,11 @@ class TraceIdWebFilterTest {
         Mockito.verify(webFilterChain, Mockito.times(1))
             .filter(Mockito.eq(mockServerWebExchange));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .loadTraceId(Mockito.any(ServerWebExchange.class));
+            .load(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .generateTraceId(Mockito.any(ServerWebExchange.class));
+            .generate(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .saveTraceId(
+            .save(
                 Mockito.any(ServerWebExchange.class),
                 Mockito.any(TraceId.class));
     }
@@ -105,7 +105,7 @@ class TraceIdWebFilterTest {
         @Mock TraceId traceId) {
 
         mockFilter(webFilterChain);
-        mockLoadTraceId(this.traceIdRepository, traceId);
+        mockLoad(this.traceIdRepository, traceId);
 
         MockServerWebExchange mockServerWebExchange =
             MockServerWebExchange.from(MockServerHttpRequest.get("/"));
@@ -116,11 +116,11 @@ class TraceIdWebFilterTest {
         Mockito.verify(webFilterChain, Mockito.times(1))
             .filter(Mockito.eq(mockServerWebExchange));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .loadTraceId(Mockito.any(ServerWebExchange.class));
+            .load(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.never())
-            .generateTraceId(Mockito.any(ServerWebExchange.class));
+            .generate(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.never())
-            .saveTraceId(
+            .save(
                 Mockito.any(ServerWebExchange.class),
                 Mockito.any(TraceId.class));
     }
@@ -131,9 +131,9 @@ class TraceIdWebFilterTest {
         @Mock TraceId traceId) {
 
         mockFilter(webFilterChain);
-        mockLoadTraceId(this.traceIdRepository);
-        mockGenerateTraceId(this.traceIdRepository, traceId);
-        mockSaveTraceId(this.traceIdRepository);
+        mockLoad(this.traceIdRepository);
+        mockGenerate(this.traceIdRepository, traceId);
+        mockSave(this.traceIdRepository);
 
         MockServerWebExchange mockServerWebExchange =
             MockServerWebExchange.from(MockServerHttpRequest.get("/"));
@@ -144,11 +144,11 @@ class TraceIdWebFilterTest {
         Mockito.verify(webFilterChain, Mockito.times(1))
             .filter(Mockito.eq(mockServerWebExchange));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .loadTraceId(Mockito.any(ServerWebExchange.class));
+            .load(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .generateTraceId(Mockito.any(ServerWebExchange.class));
+            .generate(Mockito.any(ServerWebExchange.class));
         Mockito.verify(this.traceIdRepository, Mockito.times(1))
-            .saveTraceId(
+            .save(
                 Mockito.any(ServerWebExchange.class),
                 Mockito.any(TraceId.class));
     }
@@ -158,33 +158,33 @@ class TraceIdWebFilterTest {
             .thenReturn(Mono.empty().then());
     }
 
-    private void mockLoadTraceId(TraceIdRepository traceIdRepository) {
+    private void mockLoad(TraceIdRepository traceIdRepository) {
         Mockito.when(
-            traceIdRepository.loadTraceId(Mockito.any(ServerWebExchange.class)))
+            traceIdRepository.load(Mockito.any(ServerWebExchange.class)))
             .thenReturn(Mono.empty());
     }
 
-    private void mockLoadTraceId(TraceIdRepository traceIdRepository, TraceId traceId) {
+    private void mockLoad(TraceIdRepository traceIdRepository, TraceId traceId) {
         Mockito.when(
-            traceIdRepository.loadTraceId(Mockito.any(ServerWebExchange.class)))
+            traceIdRepository.load(Mockito.any(ServerWebExchange.class)))
             .thenReturn(Mono.just(traceId));
     }
 
-    private void mockGenerateTraceId(TraceIdRepository traceIdRepository) {
+    private void mockGenerate(TraceIdRepository traceIdRepository) {
         Mockito.when(
-            traceIdRepository.generateTraceId(Mockito.any(ServerWebExchange.class)))
+            traceIdRepository.generate(Mockito.any(ServerWebExchange.class)))
             .thenReturn(Mono.empty());
     }
 
-    private void mockGenerateTraceId(TraceIdRepository traceIdRepository, TraceId traceId) {
+    private void mockGenerate(TraceIdRepository traceIdRepository, TraceId traceId) {
         Mockito.when(
-            traceIdRepository.generateTraceId(Mockito.any(ServerWebExchange.class)))
+            traceIdRepository.generate(Mockito.any(ServerWebExchange.class)))
             .thenReturn(Mono.just(traceId));
     }
 
-    private void mockSaveTraceId(TraceIdRepository traceIdRepository) {
+    private void mockSave(TraceIdRepository traceIdRepository) {
         Mockito.when(
-            traceIdRepository.saveTraceId(
+            traceIdRepository.save(
                 Mockito.any(ServerWebExchange.class),
                 Mockito.any(TraceId.class)))
             .thenReturn(Mono.empty().then());
