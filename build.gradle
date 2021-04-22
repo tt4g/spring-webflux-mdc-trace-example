@@ -20,6 +20,7 @@ allprojects {
         // Set `--release <JDK_VERSION>` option arguments of `javac`.
         options.release.set(projectJdkVersion)
         options.encoding = "UTF-8"
+        options.compilerArgs += "-Xlint:all"
     }
 
     plugins.withId("java") {
