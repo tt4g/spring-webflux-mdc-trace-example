@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveMapSessionRepository;
 import org.springframework.session.ReactiveSessionRepository;
 import org.springframework.session.config.annotation.web.server.EnableSpringWebSession;
@@ -12,7 +13,7 @@ import org.springframework.session.config.annotation.web.server.EnableSpringWebS
 public class SessionConfig {
 
     @Bean
-    public ReactiveSessionRepository reactiveSessionRepository(
+    public ReactiveSessionRepository<MapSession> reactiveSessionRepository(
         SessionProperties sessionProperties) {
         ReactiveMapSessionRepository sessionRepository =
             new ReactiveMapSessionRepository(new ConcurrentHashMap<>());

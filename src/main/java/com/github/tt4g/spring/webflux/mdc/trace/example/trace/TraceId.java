@@ -12,7 +12,7 @@ public class TraceId implements Serializable {
     private final String traceId;
 
     TraceId(String traceId) {
-        if (StringUtils.isEmpty(traceId)) {
+        if (!StringUtils.hasLength(traceId)) {
             throw new IllegalArgumentException("traceId is empty.");
         }
 
@@ -25,15 +25,19 @@ public class TraceId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TraceId traceId1 = (TraceId) o;
-        return Objects.equals(traceId, traceId1.traceId);
+        return Objects.equals(this.traceId, traceId1.traceId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(traceId);
+        return Objects.hash(this.traceId);
     }
 
     @Override

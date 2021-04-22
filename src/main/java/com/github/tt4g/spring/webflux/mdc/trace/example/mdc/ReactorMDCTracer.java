@@ -32,7 +32,7 @@ public class ReactorMDCTracer<T> implements CoreSubscriber<T> {
             // Can use Operators.list() to create a function that can be
             // used to support a custom operator via Hooks#onEachOperator().
             // See Operators.lift() javadoc.
-            Operators.lift((scannable, coreSubscriber) -> new ReactorMDCTracer(coreSubscriber)));
+            Operators.lift((scannable, coreSubscriber) -> new ReactorMDCTracer<>(coreSubscriber)));
     }
 
     public static void resetHook() {
@@ -68,15 +68,17 @@ public class ReactorMDCTracer<T> implements CoreSubscriber<T> {
         withTraceId(() -> this.coreSubscriber.onComplete());
     }
 
+    @SuppressWarnings("try")
     private void withTraceId(Runnable body) {
         Context context = this.coreSubscriber.currentContext();
         Optional<TraceId> traceIdOptional = context.getOrEmpty(TraceIdWebFilter.TRACE_ID_CONTEXT_KEY);
 
         traceIdOptional.ifPresentOrElse(traceId -> {
-            try (MDCCloseable mdcCloseable = MDC.putCloseable(MDC_KEY, traceId.render())) {
-                body.run();
-            }
-        },
-        body);
+                try (MDCCloseable mdcCloseable = MDC.putCloseable(MDC_KEY, traceId.render())) {
+                    body.run();
+                }
+            },
+            body);
     }
+
 }

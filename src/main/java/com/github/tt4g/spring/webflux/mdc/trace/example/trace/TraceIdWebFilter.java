@@ -32,7 +32,8 @@ public class TraceIdWebFilter implements WebFilter {
 
                 return chain.filter(exchange)
                     // Set TraceId to Reactor Context.
-                    .subscriberContext(context -> context.put(TRACE_ID_CONTEXT_KEY, traceId));
+                    .contextWrite(context ->
+                        context.put(TRACE_ID_CONTEXT_KEY, traceId));
             });
     }
 
@@ -57,7 +58,7 @@ public class TraceIdWebFilter implements WebFilter {
 
         return traceIdOptional
             // ignore null or empty.
-            .filter(traceId -> !StringUtils.isEmpty(traceId))
+            .filter(traceId -> StringUtils.hasLength(traceId))
             .map(nonEmptyTraceId ->
                 Mono.just(new TraceId(nonEmptyTraceId))
                     // Save TraceId from X-Trace-Id header.
