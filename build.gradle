@@ -54,6 +54,7 @@ dependencies {
     implementation("org.springframework.session:spring-session-core")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
 }
 
 // plugin: org.springframework.boot
