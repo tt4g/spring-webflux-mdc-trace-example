@@ -6,6 +6,8 @@ plugins {
     id "io.spring.dependency-management" version "1.0.10.RELEASE"
 }
 
+def projectJdkVersion = 16
+
 allprojects {
     group = "com.github.tt4g.spring.webflux.mdc.trace.example"
     version "0.1.0"
@@ -15,8 +17,25 @@ allprojects {
     }
 
     tasks.withType(JavaCompile) {
-        options.release = 11
+        // Set `--release <JDK_VERSION>` option arguments of `javac`.
+        options.release.set(projectJdkVersion)
         options.encoding = "UTF-8"
+    }
+
+    plugins.withId("java") {
+        java {
+            // Specify JDK version on Gradle 7.
+            // https://docs.gradle.org/7.0/userguide/toolchains.html
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(projectJdkVersion)
+                vendor = JvmVendorSpec.ADOPTOPENJDK
+                implementation = JvmImplementation.VENDOR_SPECIFIC
+            }
+        }
+        configurations {
+            // Exclude junit-vintage
+            all*.exclude(group: "org.junit.vintage", module: "junit-vintage-engine")
+        }
     }
 
     configurations {
@@ -26,14 +45,14 @@ allprojects {
 }
 
 dependencies {
-    developmentOnly(group: "org.springframework.boot", name: "spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-    implementation(group: "org.springframework.boot", name: "spring-boot-starter")
-    implementation(group: "org.springframework.boot", name: "spring-boot-starter-logging")
-    implementation(group: "org.springframework.boot", name: "spring-boot-starter-webflux")
-    implementation(group: "org.springframework.session", name: "spring-session-core")
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.session:spring-session-core")
 
-    testImplementation(group: "org.springframework.boot", name: "spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 // plugin: org.springframework.boot
