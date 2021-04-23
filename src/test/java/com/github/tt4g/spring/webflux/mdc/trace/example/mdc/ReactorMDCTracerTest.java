@@ -14,9 +14,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.slf4j.MDC;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.context.Context;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @MockitoSettings
 class ReactorMDCTracerTest {
@@ -25,6 +27,10 @@ class ReactorMDCTracerTest {
 
     @Mock
     private TraceId traceId;
+
+    private AtomicReference<String> traceIdCaptor;
+
+    private Duration maxBlocking = Duration.ofMillis(500);
 
     @BeforeAll
     static void beforeAll() {
@@ -40,22 +46,107 @@ class ReactorMDCTracerTest {
     void setUp() {
         BDDMockito.given(this.traceId.render())
             .willReturn(TRACE_ID);
+
+        this.traceIdCaptor = new AtomicReference<>(null);
     }
 
     @Test
     public void passTraceIdToMdcFromContext() {
-        AtomicReference<String> traceId = new AtomicReference<>(null);
-
         Mono.just("foo")
             .map(element -> {
-                traceId.set(MDC.get(ReactorMDCTracer.MDC_KEY));
+                this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY));
 
                 return element;
             })
             .contextWrite(createContext())
-            .block(Duration.ofMillis(500));
+            .block(this.maxBlocking);
 
-        assertThat(traceId).hasValue(TRACE_ID);
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
+    }
+
+    @Test
+    public void passTraceIdToMdcFromContextOnNext() {
+        Mono.just("foo")
+            .doOnNext(element -> {
+                this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY));
+            })
+            .contextWrite(createContext())
+            .block(this.maxBlocking);
+
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
+    }
+
+    @Test
+    public void passTraceIdToMdcFromContextOnComplete() {
+        Mono.just("foo")
+            .doOnEach(signal -> {
+                if (signal.isOnComplete()) {
+                    this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY));
+                }
+            })
+            .contextWrite(createContext())
+            .block(this.maxBlocking);
+
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
+    }
+
+    @Test
+    public void passTraceIdToMdcFromContextOnError() {
+        try {
+            Mono.just("foo")
+                .<String>map(element -> {
+                    throw new RuntimeException("on error");
+                })
+                .doOnError(ex ->
+                    this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY)))
+                .contextWrite(createContext())
+                .block(this.maxBlocking);
+
+            fail("Should not reach here.");
+        } catch (RuntimeException ex) {
+
+        }
+
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
+    }
+
+    @Test
+    public void passTraceIdToMdcFromContextWithFlatMap() {
+        Mono.just("foo")
+            .subscribeOn(Schedulers.parallel())
+            .flatMap(element -> {
+                this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY));
+
+                return Mono.just(element);
+            })
+            .subscribeOn(Schedulers.parallel())
+            .contextWrite(createContext())
+            .block(this.maxBlocking);
+
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
+    }
+
+    @Test
+    public void passTraceIdToFromMdcFromContextWithFromRunnable() {
+        Mono.fromRunnable(() ->
+            this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY)))
+            .subscribeOn(Schedulers.parallel())
+            .contextWrite(createContext())
+            .block(this.maxBlocking);
+
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
+    }
+
+    @Test
+    public void passTraceIdToMdcFromContextWithDefer() {
+        Mono.defer(() ->
+            Mono.fromRunnable(() ->
+                this.traceIdCaptor.set(MDC.get(ReactorMDCTracer.MDC_KEY))))
+            .subscribeOn(Schedulers.parallel())
+            .contextWrite(createContext())
+            .block(this.maxBlocking);
+
+        assertThat(this.traceIdCaptor).hasValue(TRACE_ID);
     }
 
     private Context createContext() {
