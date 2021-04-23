@@ -47,12 +47,12 @@ class ReactorMDCTracerTest {
         AtomicReference<String> traceId = new AtomicReference<>(null);
 
         Mono.just("foo")
-            .contextWrite(createContext())
             .map(element -> {
                 traceId.set(MDC.get(ReactorMDCTracer.MDC_KEY));
 
                 return element;
             })
+            .contextWrite(createContext())
             .block(Duration.ofMillis(500));
 
         assertThat(traceId).hasValue(TRACE_ID);
